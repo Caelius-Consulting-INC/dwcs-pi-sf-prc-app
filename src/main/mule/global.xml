@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:adtalem-core="http://www.mulesoft.org/schema/mule/adtalem-core"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core 
+http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/adtalem-core http://www.mulesoft.org/schema/mule/adtalem-core/current/mule-adtalem-core.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<configuration doc:name="Configuration"
+		doc:id="da15166a-5d9d-4b77-a80d-4743c6e90e45"
+		defaultErrorHandler-ref="common-exception-handler" doc:description="common-exception-handler"/>
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="77d40699-0746-4cbf-a9b5-b9460b401894"
+		file="properties/config-${mule.env}.yaml" doc:description="Property Files&#10;"/>
+	<secure-properties:config name="secure-properties-configuration" doc:name="Secure Properties Config" doc:id="94934815-b2cd-47da-986a-dd87cc29345a" file="properties/secure/config-${mule.env}-secure.yaml" key="${mule.key}" doc:description="Secure Property Files">
+		<secure-properties:encrypt algorithm="Blowfish" />
+
+
+	</secure-properties:config>
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="dd661869-d2fe-461c-85f2-4dd2c7f7243f"
+		file="properties\common\common.yaml" doc:description="Common Property File&#10;"/>
+	<http:request-config name="project-insights-http-request-configuration" doc:name="HTTP Request configuration" doc:id="7cd04433-8ab7-4165-ac32-1ebc466cac8c" basePath="#[Mule::p('projectInsights.basePath')]" doc:description="Project Insights Request Configuration&#10;">
+		<http:request-connection host="#[Mule::p('projectInsights.host')]" protocol="HTTPS">
+		</http:request-connection>
+		<http:default-headers >
+		</http:default-headers>
+	</http:request-config>
+	<http:request-config
+		name="salesforce-platform-api-http-request-configuration"
+		doc:name="HTTP Request configuration"
+		doc:id="863b6720-303a-4faa-a806-61329c5eb8c0" doc:description="HTTP SALESFORCE PLATFORM API">
+		<http:request-connection host="#[Mule::p('sfState.host')]"
+			protocol="HTTPS">
+		</http:request-connection>
+	</http:request-config>
+	<salesforce:sfdc-config name="salesforce-configuration" doc:name="Salesforce Config" doc:id="3a2798eb-4231-423b-8bfd-e92903a9d2d7" doc:description="Salesforce Config &#10;">
+		<salesforce:basic-connection username="${secure::salesforce.username}" password="${secure::salesforce.password}" securityToken="${secure::salesforce.securityToken}" url="${salesforce.authorizationUrl}" />
+	</salesforce:sfdc-config>
+	<email:smtp-config name="email-configuration" doc:name="Email SMTP" doc:id="96e15b92-5b66-4db1-ad93-3f7bd662d175" doc:description="Email SMTP Configuration&#10;">
+		<email:smtp-connection host="${email.host}" port="${email.port}" user="${email.user}" password="${email.password}" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<os:object-store name="sf-cache-object-store" doc:name="Object store" doc:id="de51df3b-7ca4-4ca1-9051-b6985ab416cc" entryTtl="${sf.entryTtl}" entryTtlUnit="MINUTES" expirationInterval="${sf.expirationInterval}" />
+	<ee:object-store-caching-strategy name="sf-token-caching-strategy" doc:name="Caching Strategy" doc:id="3dc89ef9-215c-4fc7-a4d5-985ed276c6e3" objectStore="sf-cache-object-store" />
+
+</mule>

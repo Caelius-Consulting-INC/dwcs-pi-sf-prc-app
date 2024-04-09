@@ -1,0 +1,26 @@
+# Dev Configuration
+
+projectInsights:
+  host: "https://deepwater.projectinsight.net"
+  basePath: "/api"
+  Time_Entry__c:
+    path: "/time-entry/search"
+  Expense_Entry__c:
+    path: "/expense-entry/search"
+
+sf:
+  host: "dwcs-salesforce-sys-api.us-e2.cloudhub.io"
+  path: "bulkUpsert"
+  basePath: "api" 
+  
+sfState:
+  host: "deepwater--caeliusdev.sandbox.my.salesforce.com"
+  oAuthToken: "/services/oauth2/token" 
+  client_id: "3MVG9JamK_x9K2XKH6jxK9qKbE22NiMa6fNqG32EhW9NAUqtS_SaRDD3AiQQrdaNpd8U6I7vSPlVjNIC8_TsZ"
+  client_secret: "1E2132B001862D6E39BC7A4A307B669686608EEFA6AA9E5316C1E39CFA80629C"
+  
+acknowledgment:
+  responseTimeout: "1000000"
+  
+salesforce:
+  authorizationUrl: "https://deepwater--caeliusdev.sandbox.my.salesforce.com/services/Soap/u/56.0"

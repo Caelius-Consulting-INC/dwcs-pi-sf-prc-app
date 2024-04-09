@@ -1,0 +1,56 @@
+# Common Configuration
+
+# Listener Configuration
+http:
+  host: "0.0.0.0"
+  readTimeout: "30000"
+  port: "8081"
+  private:
+    port: "8091"
+    
+https:
+  host: "0.0.0.0"
+  readTimeout: "30000"
+  port: "8082"
+  private:
+    port: "8092"
+
+queue:
+  name: "roi-sf-sync"
+  timeout: "3"
+
+queuesftoroi:
+  name: "sf-roi-sync"
+  timeout: "3"
+  
+defaultQueue:
+  name: "inventory-sync-recursion"
+  timeout: "3"
+  
+retry:
+  count: "5"
+  timeout: "60000"   
+
+process:
+  time: "10"
+  
+maxConcurrency: "1"
+
+responseTimeout: "600000"
+
+untilSuccessful:
+  retries: "10"
+  time: "15000"
+
+basicAuth:
+  username: "50ad15a29d294f4ba3ed642e126f8b99"
+  password: "639F2E41d83B4378947Fa4967c14a64F"
+
+email:
+  host: "smtp.gmail.com"
+  port: "587"
+  user: "anuj.bargav1@caeliusconsulting.com"
+  password: "xhrclwyowwpdsutu"
+  
+retention:
+  age: "1"

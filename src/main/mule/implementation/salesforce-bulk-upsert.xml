@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="salesforce-bulk-upsert-sub-flow" doc:id="30a66c3e-cd30-4c0c-bdec-0d3a621c3b44" >
+		<logger level="INFO" doc:name="Start" doc:id="66b78bf9-a4dc-40ce-9f22-435844407d37" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="var : ingestData" doc:id="2ae1ca31-2f5c-41d0-9c39-65ef19753cf2">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="ingestData"><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "object" : vars.sfObjectName,
+    "externalIdFieldName" : Mule::p('sfVar.externalId'),
+    "contentType" : Mule::p('sfVar.contentType'),
+    "operation" : Mule::p('sfVar.operation'),
+    "lineEnding" : Mule::p('sfVar.lineEnding'),
+    "columnDelimiter": Mule::p('sfVar.columnDelimiter')
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request to create job Id " doc:id="8b645c0a-8d3a-4b5e-9f74-c8537b6fe81e" config-ref="salesforce-platform-api-http-request-configuration" path="/services/data/v56.0/jobs/ingest" responseTimeout="#[Mule::p('responseTimeout')]" target="BatchPayload">
+			<http:body><![CDATA[#[output json 
+---
+vars.ingestData]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+"Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
+		</http:request>
+		<try doc:name="Try" doc:id="9ad8875e-4262-4736-8a00-10f7a78caddf">
+			<http:request method="PUT" doc:name="Request to upsert the data" doc:id="e1ecfd84-a36a-4347-88ef-5631477633fa" config-ref="salesforce-platform-api-http-request-configuration" path='#["/services/data/v56.0/jobs/ingest/" ++ vars.BatchPayload.id++ "/batches"]' responseTimeout="#[Mule::p('responseTimeout')]" target="acknowledgment ">
+				<http:body><![CDATA[#[vars.bulkData]]]></http:body>
+				<http:headers><![CDATA[#["Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
+			</http:request>
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="590dd8b7-2c76-4d60-b897-03f4ca4f84bc">
+					<http:request method="PATCH" doc:name="Request to close the job id" doc:id="8ce0c61d-51ff-4ca8-842b-469b24f42903" config-ref="salesforce-platform-api-http-request-configuration" path='#["/services/data/v56.0/jobs/ingest/" ++ vars.BatchPayload.id]' responseTimeout="#[Mule::p('responseTimeout')]">
+						<http:body><![CDATA[#[%dw 2.0
+output application/json 
+---
+{"state":"UploadComplete"}]]]></http:body>
+						<http:headers><![CDATA[#["Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
+					</http:request>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<http:request method="PATCH" doc:name="Request to close the job id" doc:id="bbeb7063-a336-4048-b0fa-d058a5e4414b" config-ref="salesforce-platform-api-http-request-configuration" path='#["/services/data/v56.0/jobs/ingest/" ++ vars.BatchPayload.id]' responseTimeout="#[Mule::p('responseTimeout')]">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json 
+---
+{"state":"UploadComplete"}]]]></http:body>
+			<http:headers><![CDATA[#["Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="END" doc:id="3128b6f5-fa78-4268-8838-52d3e3584f7d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</sub-flow>
+</mule>

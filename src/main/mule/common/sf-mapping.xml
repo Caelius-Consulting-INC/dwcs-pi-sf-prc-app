@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="sf-mapping-sub-flow" doc:id="076bb327-ccdc-4670-a41a-d25b384f7562" >
+		<logger level="INFO" doc:name="Start" doc:id="198b81b3-6241-437c-8e8b-deada2e386c7" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Salesforce Mapping Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="var : dwlFilePath" doc:id="c63caf82-c689-4c32-a3a6-1079704e3b02" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="dwlFilePath" ><![CDATA[%dw 2.0
+output application/java
+var dwlFilePath = 'classpath://dwl/v-' ++ vars.entityType ++ "-" ++ vars.sfObjectName ++ '.dwl'
+---
+readUrl(dwlFilePath, 'text/plain')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:dynamic-evaluate doc:name="JSON to CSV" doc:id="bb7dd01b-232d-46c4-934c-2401bc1574c7" expression="#[vars.dwlFilePath]" >
+			<ee:parameters >#[{payload : payload}]</ee:parameters>
+		</ee:dynamic-evaluate>
+		<ee:transform doc:name="var : bulkData" doc:id="12c4e1b9-4551-4e3f-8ce4-3bd714cf759f" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="bulkData" ><![CDATA[payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="sf-access-token-subflow" doc:id="9e9188ec-7077-4e5d-8329-6aa4bb3a006a" name="sf-access-token-sub-flow" />
+		<logger level="INFO" doc:name="End" doc:id="7825ace8-64ef-413f-9de3-148866a02fe4" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Mapping Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</sub-flow>
+	<sub-flow name="sf-access-token-sub-flow" doc:id="a1947dcc-2241-4521-aae2-471ac8faed00" >
+		<logger level="INFO" doc:name="Start" doc:id="64c50ef3-27b7-459c-9543-5b43e54e1e91" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Salesforce Token Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="salesforceVars" doc:id="85cbc72d-b6c6-433c-be07-43b4cfca4e2f" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="salesforceVars" ><![CDATA[%dw 2.0
+import p from Mule
+output application/x-www-form-urlencoded
+---
+{
+	client_id: Mule::p('sf.client_id'),
+	client_secret: Mule::p('sf.client_secret'),
+	grant_type: "client_credentials"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:cache doc:name="Cache" doc:id="5ad2e2be-cccf-4122-8e49-bd74275c0ac6" cachingStrategy-ref="sf-token-caching-strategy" >
+			<http:request method="POST" doc:name="token request" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sf.oAuthToken}" >
+				<http:body ><![CDATA[#[vars.salesforceVars]]]></http:body>
+			</http:request>
+		</ee:cache>
+		<ee:transform doc:name="accessToken" doc:id="a85f77b2-33f7-4a46-b80a-b96aa8a917a3" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="accessToken" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.access_token]]></ee:set-variable>
+				<ee:set-variable variableName="host" ><![CDATA[%dw 2.0
+import * from dw::core::Strings
+output application/json
+---
+substringAfter(payload.instance_url,"//")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="salesforce-bulk-upsert-sub-flow" doc:id="d1cafedc-9194-4547-88dd-7a991f6de03b" name="salesforce-bulk-upsert-sub-flow" />
+		<logger level="INFO" doc:name="End" doc:id="9dc817af-eee4-4226-8b02-7f423ebb7a4e" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Token Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</sub-flow>
+</mule>

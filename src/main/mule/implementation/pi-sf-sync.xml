@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="pi-iteration-sub-flow" doc:id="2336a48d-0184-433b-a223-e4186058914a" >
+		<logger level="INFO" doc:name="Start" doc:id="8ca24046-101b-4f2b-a163-ed73dc471679" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]'/>
+		<ee:transform doc:name="Sync Objects" doc:id="5d19b215-4a21-4012-a7a7-35426487cd23" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	"Time_Entry__c",
+	"Expense_Entry__c"
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="Iterate Over Each Object" doc:id="3a219eb2-643c-4228-827f-d974f4136639" collection="#[payload]">
+			<ee:transform doc:name="var : sfObject" doc:id="e3a81e92-80bc-48eb-be32-fcdd83284b1c">
+			<ee:message>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+			<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="d977b83b-9704-4d2b-bcc9-7fa3c562d318" name="retrieve-project-insights-data-sub-flow"/>
+		</foreach>
+		<logger level="INFO" doc:name="End" doc:id="ce5d9614-5f90-40aa-b002-191414aa18c6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]'/>
+	</sub-flow>
+	<sub-flow name="retrieve-project-insights-data-sub-flow" doc:id="d3f915be-fe3e-47b2-bebe-c779cd256310" >
+		<logger level="INFO" doc:name="Start" doc:id="0245b110-0343-4d07-870a-4d1d97262920" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="var : httpRequest" doc:id="7ee6cca2-0a61-4db0-ba0d-97ce990e71dc" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dwl/v-httpRequest.dwl" variableName="httpRequest" />
+			</ee:variables>
+		</ee:transform>
+		<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="d1091cc4-604f-4667-839b-685a9dddb250" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]">
+			<http:query-params ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"api-token" : vars.httpRequest.apiToken,
+	"startDate" : vars.httpRequest.startDate,
+	"endDate" : vars.httpRequest.endDate
+}]]]></http:query-params>
+		</http:request>
+		<flow-ref doc:name="sf-mapping-sub-flow" doc:id="338801d3-dc93-49b0-975a-223e666c47ab" name="sf-mapping-sub-flow"/>
+		<logger level="INFO" doc:name="End" doc:id="d76282cf-5cd8-42a5-ab40-55bbf4ee536b" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</sub-flow>
+</mule>
