@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="513a0309-19fc-4315-b308-23143a902e14" >
 		<scheduler doc:name="Scheduler" doc:id="05269f4c-3d6b-4af8-825e-f943405b5874" >
 			<scheduling-strategy >
-				<fixed-frequency />
+				<fixed-frequency frequency="1" timeUnit="HOURS"/>
 			</scheduling-strategy>
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="79212d61-f122-4c92-9fa9-9ca7e40b7956" name="global-api-common-entry-sub-flow"/>
@@ -31,6 +31,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="528a9974-35ab-4b6c-9e53-773c72b0f007" name="global-api-common-entry-sub-flow" />
 		<logger level="INFO" doc:name="Start" doc:id="90f3250a-2a1e-4faa-9a0d-32b788ba64f1" message='#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}&#93;' />
+		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="7e0da902-daac-4241-b5dc-58515f0999dc">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
+				<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="b6e41f83-f9ed-4174-8385-4011d5da9cb3" name="pi-iteration-sub-flow" />
 		<logger level="INFO" doc:name="End" doc:id="5b2374b5-27d9-49d9-a31f-19576dfd3092" message='#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}&#93;' />
 	</flow> [STUDIO] -->

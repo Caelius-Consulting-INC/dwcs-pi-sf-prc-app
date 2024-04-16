@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 output application/json
 ---
 {
-    "object" : vars.sfObjectName,
+    "object" : vars.sfObject,
     "externalIdFieldName" : Mule::p('sfVar.externalId'),
     "contentType" : Mule::p('sfVar.contentType'),
     "operation" : Mule::p('sfVar.operation'),

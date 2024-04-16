@@ -1,23 +1,18 @@
 # local Configuration
 
-roi:
-  host: "localhost"
-  basePath: "api" 
-  acknowledgment:
-    path: "acknowledgment"
-  customers:
-    path: "/customers/batch"
-  sales_order_headers:
-    path: "/sales-order-headers/batch"
-  sales_order_details:
-    path: "/sales-order-details/batch"
-  items:
-    path: "/items/batch"
-  
-sf:
-  host: "localhost"
-  path: "bulkUpsert"
-  basePath: "api" 
+# Project Insights
+projectInsights:
+  host: "deepwater.projectinsight.net"
+  basePath: "/api"
+  Time_Entry__c:
+    path: "/time-entry/search"
+  Expense_Entry__c:
+    path: "/expense-entry/search"
+  apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MDkyMTQxMTgsImV4cCI6MTczNTYyNDgwMCwic3ViIjoiY2VjOTcyNjYtN2Q0Yy00ZDY5LWJlOTEtYmYyY2FhZDlhNDdiIn0.ndhrlffvAIgAxdd4tEsaZq3DC_amnHfeVQ3H2wftiD62i-9ZOYTCs6GmEEDY2NYYTIqME4rmYyfe7gg8TCL3pA"
+
+sf: 
+  expirationInterval: "1"
+  entryTtl: "58"
   
 sfState:
   host: "deepwater--caeliusdev.sandbox.my.salesforce.com"
@@ -30,3 +25,13 @@ acknowledgment:
   
 salesforce:
   authorizationUrl: "https://deepwater--caeliusdev.sandbox.my.salesforce.com/services/Soap/u/56.0"
+  
+sfVar:
+  lineEnding: "CRLF"
+  contentType: "CSV"
+  operation: "upsert"
+  columnDelimiter: "PIPE"
+  externalId: "Id__c"
+  
+response:
+  timeout: "600000"

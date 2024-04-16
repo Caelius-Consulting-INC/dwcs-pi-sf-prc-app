@@ -42,7 +42,7 @@ payload]]></ee:set-variable>
 				<ee:set-variable resource="dwl/v-httpRequest.dwl" variableName="httpRequest" />
 			</ee:variables>
 		</ee:transform>
-		<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="d1091cc4-604f-4667-839b-685a9dddb250" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]">
+		<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="d1091cc4-604f-4667-839b-685a9dddb250" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]" responseTimeout="${response.timeout}">
 			<http:query-params ><![CDATA[#[%dw 2.0
 output application/json
 ---

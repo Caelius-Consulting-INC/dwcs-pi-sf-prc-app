@@ -12,14 +12,22 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<ee:variables >
 				<ee:set-variable variableName="dwlFilePath" ><![CDATA[%dw 2.0
 output application/java
-var dwlFilePath = 'classpath://dwl/v-' ++ vars.entityType ++ "-" ++ vars.sfObjectName ++ '.dwl'
+var dwlFilePath = 'classpath://dwl/v-' ++ vars.sfObject ++ '-mapping.dwl'
 ---
 readUrl(dwlFilePath, 'text/plain')]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:dynamic-evaluate doc:name="JSON to CSV" doc:id="bb7dd01b-232d-46c4-934c-2401bc1574c7" expression="#[vars.dwlFilePath]" >
+		<ee:dynamic-evaluate doc:name="JSON Transformation" doc:id="bb7dd01b-232d-46c4-934c-2401bc1574c7" expression="#[vars.dwlFilePath]" >
 			<ee:parameters >#[{payload : payload}]</ee:parameters>
 		</ee:dynamic-evaluate>
+		<ee:transform doc:name="Transform Message" doc:id="ccef3526-baa9-4d5f-bdab-6bdad48c380d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output text/csv quoteValues = true, encoding = 'UTF-8', separator = '|'
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<ee:transform doc:name="var : bulkData" doc:id="12c4e1b9-4551-4e3f-8ce4-3bd714cf759f" >
 			<ee:message />
 			<ee:variables >
@@ -39,14 +47,14 @@ import p from Mule
 output application/x-www-form-urlencoded
 ---
 {
-	client_id: Mule::p('sf.client_id'),
-	client_secret: Mule::p('sf.client_secret'),
+	client_id: Mule::p('sfState.client_id'),
+	client_secret: Mule::p('sfState.client_secret'),
 	grant_type: "client_credentials"
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:cache doc:name="Cache" doc:id="5ad2e2be-cccf-4122-8e49-bd74275c0ac6" cachingStrategy-ref="sf-token-caching-strategy" >
-			<http:request method="POST" doc:name="token request" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sf.oAuthToken}" >
+			<http:request method="POST" doc:name="sf-token" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sfState.oAuthToken}" >
 				<http:body ><![CDATA[#[vars.salesforceVars]]]></http:body>
 			</http:request>
 		</ee:cache>

@@ -1,17 +1,18 @@
 # Dev Configuration
 
+# Project Insights
 projectInsights:
-  host: "https://deepwater.projectinsight.net"
+  host: "deepwater.projectinsight.net"
   basePath: "/api"
   Time_Entry__c:
     path: "/time-entry/search"
   Expense_Entry__c:
     path: "/expense-entry/search"
+  apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MDkyMTQxMTgsImV4cCI6MTczNTYyNDgwMCwic3ViIjoiY2VjOTcyNjYtN2Q0Yy00ZDY5LWJlOTEtYmYyY2FhZDlhNDdiIn0.ndhrlffvAIgAxdd4tEsaZq3DC_amnHfeVQ3H2wftiD62i-9ZOYTCs6GmEEDY2NYYTIqME4rmYyfe7gg8TCL3pA"
 
 sf:
-  host: "dwcs-salesforce-sys-api.us-e2.cloudhub.io"
-  path: "bulkUpsert"
-  basePath: "api" 
+  expirationInterval: "1"
+  entryTtl: "58"
   
 sfState:
   host: "deepwater--caeliusdev.sandbox.my.salesforce.com"
@@ -24,3 +25,13 @@ acknowledgment:
   
 salesforce:
   authorizationUrl: "https://deepwater--caeliusdev.sandbox.my.salesforce.com/services/Soap/u/56.0"
+  
+sfVar:
+  lineEnding: "LF"
+  contentType: "CSV"
+  operation: "upsert"
+  columnDelimiter: "PIPE"
+  externalId: "Id__c"
+  
+response:
+  timeout: "600000"
