@@ -43,6 +43,7 @@ payload]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="d1091cc4-604f-4667-839b-685a9dddb250" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]" responseTimeout="${response.timeout}">
+			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
 			<http:query-params ><![CDATA[#[%dw 2.0
 output application/json
 ---

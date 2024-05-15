@@ -14,43 +14,41 @@ https:
   port: "8082"
   private:
     port: "8092"
-
-queue:
-  name: "roi-sf-sync"
-  timeout: "3"
-
-queuesftoroi:
-  name: "sf-roi-sync"
-  timeout: "3"
   
-defaultQueue:
-  name: "inventory-sync-recursion"
-  timeout: "3"
-  
+# Retry Mechanism
 retry:
   count: "5"
   timeout: "60000"   
-
-process:
-  time: "10"
   
+# Scheduler Max Concurrency
 maxConcurrency: "1"
 
-responseTimeout: "600000"
+# Response Timeout
+response:
+  timeout: "600000"
 
+# Until Successful
 untilSuccessful:
   retries: "10"
   time: "15000"
 
+# Basic Auth Credentials
 basicAuth:
   username: "50ad15a29d294f4ba3ed642e126f8b99"
   password: "639F2E41d83B4378947Fa4967c14a64F"
 
+# Email Configuration
 email:
   host: "smtp.gmail.com"
   port: "587"
   user: "anuj.bargav1@caeliusconsulting.com"
   password: "xhrclwyowwpdsutu"
+
+# Parallel For Each Concurrency
+sfSync:
+  concurrency: "4"
   
-retention:
-  age: "1"
+# Reconnection
+reconnection:
+  frequency: "5000"
+  attempts: "6"

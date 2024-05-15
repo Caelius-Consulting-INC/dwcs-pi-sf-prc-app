@@ -1,8 +1,5 @@
 # Dev Secure Credentials
-roi:
-  client_id: "![YMEPXhmB3lrC2RD01jqKXklqD+4s4tVDAlfWhR+rWOV3R0lrj4X1EA==]"
-  client_secret: "![5RgzkvbZDlHLV+mpWHefEQciYNeUu749F+sAFk/CIuL7cPNLZ8K96w==]"
-  
+
 sf:
   client_id: "![7MkMQIxx8hsg3kdswRBQAUrYtC/jNVJjloLN4r6GW7sEFeYjOO0kHQ==]"
   client_secret: "![6d3uivOP3dOa3yrLAGs+wQvm0Ujxog7O0q2mYWgYI0icFAeJXptrjQ==]"
@@ -10,4 +7,4 @@ sf:
 salesforce:
   username: "![ADWRQMAL1hLMKr0c1OqzgxLtYFebDHot+YsBiJY9yDDwnM73Ne0u3A==]"
   password: "![aMEK+W3FUy/dJgiJ4qDI7A==]"
-  securityToken: "![YzDBvjKD6F/1rqOkypW4pGC3J+wGkwdgruMgEXkM7VI=]"
+  securityToken: "![ZaI68aayyyWQTXnCJaGSicnetfhzK3xmIzattUtdJ9M=]"

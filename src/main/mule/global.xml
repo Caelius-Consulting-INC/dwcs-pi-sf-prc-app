@@ -66,5 +66,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	</email:smtp-config>
 	<os:object-store name="sf-cache-object-store" doc:name="Object store" doc:id="de51df3b-7ca4-4ca1-9051-b6985ab416cc" entryTtl="${sf.entryTtl}" entryTtlUnit="MINUTES" expirationInterval="${sf.expirationInterval}" />
 	<ee:object-store-caching-strategy name="sf-token-caching-strategy" doc:name="Caching Strategy" doc:id="3dc89ef9-215c-4fc7-a4d5-985ed276c6e3" objectStore="sf-cache-object-store" />
+	<global-property doc:name="Global Property" doc:id="95551d34-ac67-41d4-99ad-accac56373a4" name="mule.env" value="dev" />
+	<global-property doc:name="Global Property" doc:id="9e909f76-1444-4c32-a896-feed4dfe7dac" name="mule.key" value="mulesoft4@dwcs@2024" />
 
 </mule>
