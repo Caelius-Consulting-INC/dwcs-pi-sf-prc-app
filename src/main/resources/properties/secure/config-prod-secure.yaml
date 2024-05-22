@@ -1,8 +1,5 @@
 # Prod Secure Credentials
-roi:
-  client_id: "![YMEPXhmB3lrC2RD01jqKXklqD+4s4tVDAlfWhR+rWOV3R0lrj4X1EA==]"
-  client_secret: "![5RgzkvbZDlHLV+mpWHefEQciYNeUu749F+sAFk/CIuL7cPNLZ8K96w==]"
-  
+
 sf:
   client_id: "![7MkMQIxx8hsg3kdswRBQAUrYtC/jNVJjloLN4r6GW7sEFeYjOO0kHQ==]"
   client_secret: "![6d3uivOP3dOa3yrLAGs+wQvm0Ujxog7O0q2mYWgYI0icFAeJXptrjQ==]"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
@@ -12,6 +13,7 @@
 	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
 http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core 
@@ -24,6 +26,14 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+		    <apikit:config name="dwcs-pi-sf-api-config" api="resource::548cf115-8bab-445f-9819-3c34bc405cbc:dwcs-pi-sf-api:1.0.0:raml:zip:dwcs-pi-sf-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+		<http:listener-config name="http-listener-configuration" doc:name="HTTP Listener config" doc:id="fc886149-70c5-4af4-84a7-24a14bccbb46" doc:description="HTTP Listener Configuration">
+		<http:listener-connection host="${https.host}" port="${https.port}" readTimeout="${https.readTimeout}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="jks" path="certs/server-keystore.jks" keyPassword="${secure::tls.password}" password="${secure::tls.password}" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
 	<configuration doc:name="Configuration"
 		doc:id="da15166a-5d9d-4b77-a80d-4743c6e90e45"
 		defaultErrorHandler-ref="common-exception-handler" doc:description="common-exception-handler"/>

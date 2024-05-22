@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="dwcs-pi-sf-api-main">
+        <http:listener config-ref="http-listener-configuration" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="168f8e7b-b215-4bbc-b6a7-b1688d512189" name="global-api-common-entry-sub-flow"/>
+		<apikit:router config-ref="dwcs-pi-sf-api-config" />
+		<error-handler ref="common-exception-handler" />
+    </flow>
+    <flow name="get:\query:dwcs-pi-sf-api-config">
+		<flow-ref doc:name="pi-sf-user-sync-sub-flow" doc:id="17fcc729-72d5-4ebc-96f1-2b655b154470" name="pi-sf-user-sync-sub-flow" />
+    </flow>
+	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="e79934b0-c3da-44cb-a31e-79fb5f3c3079" initialState="stopped" >
+		<scheduler doc:name="PI Daily Scheduler" doc:id="ce58c016-4d1e-42d2-b439-65ac6ce242a9" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="HOURS" />
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="72e169b5-abb8-458d-90ce-e8b395c92271" name="global-api-common-entry-sub-flow" />
+		<logger level="INFO" doc:name="Start" doc:id="8b2c9673-46c8-41a5-9c28-b80d90d549f3" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="68758408-81f9-474e-8f7e-2718c52d4893" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
+				<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="45eb53e4-174e-4d75-8a81-353fabc50a1f" name="pi-iteration-sub-flow" />
+		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</flow>
+	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="stopped" >
+		<scheduler doc:name="PI Monthly Scheduler" doc:id="b65ba83c-a876-408a-a4e3-5e822ab78901" >
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="5698b944-cd23-444e-a37b-e99da603c4c6" name="global-api-common-entry-sub-flow" />
+		<logger level="INFO" doc:name="Start" doc:id="d3e2f1cb-5e68-464b-a73a-1ea5fe0d7c21" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="22df539f-4c97-4e52-a295-ec80a6774532" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
+				<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="eea7aaeb-48ed-41c6-95fa-a8d6bd849b08" name="pi-iteration-sub-flow" />
+		<logger level="INFO" doc:name="End" doc:id="e6182feb-781a-43ed-897d-6712380181a2" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</flow>
+</mule>

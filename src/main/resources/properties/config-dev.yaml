@@ -8,6 +8,8 @@ projectInsights:
     path: "/time-entry/search"
   Expense_Entry__c:
     path: "/expense-entry/search"
+  User:
+    path: "/user/by-email-address"
   apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MDkyMTQxMTgsImV4cCI6MTczNTYyNDgwMCwic3ViIjoiY2VjOTcyNjYtN2Q0Yy00ZDY5LWJlOTEtYmYyY2FhZDlhNDdiIn0.ndhrlffvAIgAxdd4tEsaZq3DC_amnHfeVQ3H2wftiD62i-9ZOYTCs6GmEEDY2NYYTIqME4rmYyfe7gg8TCL3pA"
 
 sf:

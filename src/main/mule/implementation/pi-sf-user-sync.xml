@@ -26,21 +26,32 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
 			<salesforce:salesforce-query ><![CDATA[#[vars.sfUserQuery]]]></salesforce:salesforce-query>
 		</salesforce:query>
+		<ee:transform doc:name="SF User Payload" doc:id="97104290-f046-4866-8f02-37c8f06dd021" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sfResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<logger level="INFO" doc:name="End" doc:id="6ce3fca7-b2ac-4717-822e-2d60403646d0" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce User Query Sync Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="sf-user-sync-sub-flow" doc:id="8daa50cd-5f5d-439f-b76c-33013be73963" >
 		<logger level="INFO" doc:name="Start" doc:id="9f3179d9-1ab5-4e09-beb4-a1424b1c61f6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "User Retieveal from Project Insights Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<parallel-foreach doc:name="Parallel Iteration over SF Query Record" doc:id="09568048-c212-466e-abd0-3e92a8c96426" collection="#[payload]" maxConcurrency="${sfSync.concurrency}" timeout="${response.timeout}" target="userSyncResult">
-			<ee:transform doc:name="var : httpRequest &amp; sfId" doc:id="05b0fb20-f94f-480b-9144-9cc34d343a77">
+		<foreach doc:name="Parallel Iteration over SF Query Record" doc:id="09568048-c212-466e-abd0-3e92a8c96426" collection="#[vars.sfResponse]">
+			<try doc:name="Try" doc:id="f05918d9-7295-42aa-b386-4a2e1c12e0bb" >
+				<ee:transform doc:name="var : httpRequest &amp; sfId" doc:id="05b0fb20-f94f-480b-9144-9cc34d343a77">
 				<ee:message />
 				<ee:variables>
 					<ee:set-variable resource="dwl/v-sfId.dwl" variableName="sfId" />
 					<ee:set-variable resource="dwl/v-userHttpRequest.dwl" variableName="httpRequest" />
 				</ee:variables>
 			</ee:transform>
-			<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="03ca2c3f-c5f1-4be8-9740-ef26a65a588c" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]" responseTimeout="${response.timeout}" >
+				<http:request method="#[vars.httpRequest.method]" doc:name="Project Insights Request" doc:id="03ca2c3f-c5f1-4be8-9740-ef26a65a588c" config-ref="project-insights-http-request-configuration" path="#[vars.httpRequest.path]" responseTimeout="${response.timeout}">
 				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
-				<http:query-params ><![CDATA[#[%dw 2.0
+				<http:query-params><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -48,32 +59,51 @@ output application/json
 	"emailAddress" : vars.httpRequest.emailAddress
 }]]]></http:query-params>
 			</http:request>
-			<ee:transform doc:name="User Payload" doc:id="3a57143c-59e4-45ac-9d57-3aa30c1a3f20" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+				<ee:transform doc:name="User Payload" doc:id="3a57143c-59e4-45ac-9d57-3aa30c1a3f20">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+import fail from dw::Runtime
+output application/json
 ---
-[
-	{
-		"Id": vars.sfId,
-		"PI_Id__c": payload.Id
-	}
-]]]></ee:set-payload>
+if(!isEmpty(payload)) [{
+	"Id": vars.sfId,
+	"PI_Id__c": payload.Id
+}] else fail ("Record failed.")
+]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-			<salesforce:update doc:name="Update" doc:id="c8d5b51c-2ea4-41c5-8a50-aa8d8840e8ac" config-ref="salesforce-configuration" type="User">
+				<salesforce:update doc:name="Update" doc:id="c8d5b51c-2ea4-41c5-8a50-aa8d8840e8ac" config-ref="salesforce-configuration" type="User">
 				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}" />
 			</salesforce:update>
-		</parallel-foreach>
-		<ee:transform doc:name="var: errorRecords &amp; successfulRecords" doc:id="99f0922c-ad51-46b4-b3b7-88d86e6c2890" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable resource="dwl/v-userSuccessfulRecords.dwl" variableName="userSuccessfulRecords" />
-				<ee:set-variable resource="dwl/v-userErrorRecords.dwl" variableName="userErrorRecords" />
-			</ee:variables>
-		</ee:transform>
+				<ee:transform doc:name="var : successfulRecords" doc:id="d6f3569b-c695-43de-8732-148c8d8857bf">
+					<ee:message>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="successfulRecords"><![CDATA[%dw 2.0
+output application/json
+---
+(vars.successfulRecords default []) + vars.sfId]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="69e151d0-dc5f-41e6-9083-6d8fe1ab611d" type="ANY">
+						<ee:transform doc:name="var : failedRecords" doc:id="13b8ff79-428a-4daa-a74c-4b24ab4ed285" >
+							<ee:message >
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="failedRecords" ><![CDATA[%dw 2.0
+output application/json
+---
+(vars.failedRecords default []) + vars.sfId]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="a7a522b3-2cd7-4379-966f-38e429e3c0b6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce User Sync Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
-	<sub-flow name="email-sub-flow" doc:id="6262e89e-d68a-4d21-80f0-30ad3cc669ed" />
+	<sub-flow name="email-sub-flow" doc:id="6262e89e-d68a-4d21-80f0-30ad3cc669ed" >
+		<logger level="INFO" doc:name="Logger" doc:id="055f4d87-9045-439a-897e-eda227dd6eef" />
+	</sub-flow>
 </mule>

@@ -46,7 +46,7 @@ email:
 
 # Parallel For Each Concurrency
 sfSync:
-  concurrency: "4"
+  concurrency: "1"
   
 # Reconnection
 reconnection:
