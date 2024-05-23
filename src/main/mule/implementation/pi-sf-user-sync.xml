@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
 	<sub-flow name="pi-sf-user-sync-sub-flow" doc:id="91c00eb1-3f16-4f86-853f-138c46263bcd" >
 		<logger level="INFO" doc:name="Start" doc:id="0121d455-a212-4eae-9781-3bb62b86cc34" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights User Sync Started",&#10;	correlationId: vars.correlationId&#10;}]' />
 		<flow-ref doc:name="sf-query-sub-flow" doc:id="d8d7f3a3-6c20-4551-8086-5f0d561fe9f7" name="sf-query-sub-flow"/>
 		<flow-ref doc:name="sf-user-sync-sub-flow" doc:id="6d2e510d-a4fc-451a-9fa3-35da40c0bcef" name="sf-user-sync-sub-flow"/>
-		<flow-ref doc:name="email-sub-flow" doc:id="e7297410-bcbd-4595-9b31-6c5caba7f8cf" name="email-sub-flow"/>
+		<flow-ref doc:name="common-email-transformation-sub-flow" doc:id="e7297410-bcbd-4595-9b31-6c5caba7f8cf" name="common-email-transformation-sub-flow"/>
 		<logger level="INFO" doc:name="End" doc:id="89b3dde3-a3e7-4c28-9f61-0c8ac4fd3e00" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights User Sync Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="sf-query-sub-flow" doc:id="c2088ef4-8623-4436-965b-3c672442e138" >
@@ -102,8 +103,5 @@ output application/json
 			</try>
 		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="a7a522b3-2cd7-4379-966f-38e429e3c0b6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce User Sync Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
-	</sub-flow>
-	<sub-flow name="email-sub-flow" doc:id="6262e89e-d68a-4d21-80f0-30ad3cc669ed" >
-		<logger level="INFO" doc:name="Logger" doc:id="055f4d87-9045-439a-897e-eda227dd6eef" />
 	</sub-flow>
 </mule>

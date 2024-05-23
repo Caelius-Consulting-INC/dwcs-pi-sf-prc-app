@@ -42,7 +42,7 @@ email:
   host: "smtp.gmail.com"
   port: "587"
   user: "anuj.bargav1@caeliusconsulting.com"
-  password: "xhrclwyowwpdsutu"
+  password: "zdwlaedjxewbovkx"
 
 # Parallel For Each Concurrency
 sfSync:
@@ -52,3 +52,7 @@ sfSync:
 reconnection:
   frequency: "5000"
   attempts: "6"
+  
+cron:
+  daily: "0 15 * * * ?"
+  monthly: "0 15 1 * * ?"

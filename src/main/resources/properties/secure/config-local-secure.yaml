@@ -8,3 +8,6 @@ salesforce:
   username: "![ADWRQMAL1hLMKr0c1OqzgxLtYFebDHot+YsBiJY9yDDwnM73Ne0u3A==]"
   password: "![aMEK+W3FUy/dJgiJ4qDI7A==]"
   securityToken: "![ZaI68aayyyWQTXnCJaGSicnetfhzK3xmIzattUtdJ9M=]"
+  
+tls:
+  password: "![aMEK+W3FUy/hCTzdarg7ig==]"

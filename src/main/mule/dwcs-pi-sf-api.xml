@@ -17,10 +17,10 @@
     <flow name="get:\query:dwcs-pi-sf-api-config">
 		<flow-ref doc:name="pi-sf-user-sync-sub-flow" doc:id="17fcc729-72d5-4ebc-96f1-2b655b154470" name="pi-sf-user-sync-sub-flow" />
     </flow>
-	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="e79934b0-c3da-44cb-a31e-79fb5f3c3079" initialState="stopped" >
+	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="e79934b0-c3da-44cb-a31e-79fb5f3c3079" initialState="started" >
 		<scheduler doc:name="PI Daily Scheduler" doc:id="ce58c016-4d1e-42d2-b439-65ac6ce242a9" >
 			<scheduling-strategy >
-				<fixed-frequency frequency="1" timeUnit="HOURS" />
+				<cron expression="${cron.daily}" />
 			</scheduling-strategy>
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="72e169b5-abb8-458d-90ce-e8b395c92271" name="global-api-common-entry-sub-flow" />
@@ -35,10 +35,10 @@
 		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="45eb53e4-174e-4d75-8a81-353fabc50a1f" name="pi-iteration-sub-flow" />
 		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
-	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="stopped" >
+	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="started" >
 		<scheduler doc:name="PI Monthly Scheduler" doc:id="b65ba83c-a876-408a-a4e3-5e822ab78901" >
 			<scheduling-strategy >
-				<fixed-frequency />
+				<cron expression="${cron.monthly}" />
 			</scheduling-strategy>
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="5698b944-cd23-444e-a37b-e99da603c4c6" name="global-api-common-entry-sub-flow" />

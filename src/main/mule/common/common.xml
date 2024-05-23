@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
 	<sub-flow name="global-api-common-entry-sub-flow" doc:id="42c08a05-ddb7-4b41-bcba-4059a10dbfb8" >
 		<ee:transform doc:name="var : correlationId" doc:id="612d5c42-8d6f-42b5-9dd2-4f53fd141b46" >
 			<ee:message >
@@ -12,5 +13,101 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-variable resource="dwl/v-correlationId.dwl" variableName="correlationId" />
 			</ee:variables>
 		</ee:transform>
+	</sub-flow>
+	<sub-flow name="common-email-transformation-sub-flow" doc:id="67055be0-ac6a-40a0-8734-6209c993b2dd" >
+		<logger level="INFO" doc:name="Start" doc:id="d011d57f-e1c1-4edf-83de-42c84a9f8674" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Email Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<scatter-gather doc:name="Success/Failure Mail" doc:id="76adfce3-4496-4913-ac68-578f0589333f" >
+			<route >
+				<foreach doc:name="For Each" doc:id="1372fb21-f970-411e-8a27-bc44e7a2083f" collection="#[if(!isEmpty(vars.successfulRecords))[vars.successfulRecords] else []]">
+					<ee:transform doc:name="success email payload" doc:id="18a48dac-d0ee-49bd-b664-6df708bf1d20">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+---
+div @(style: "display: flex; flex-direction: column; align-items: center; justify-content: center;"): {
+	div @(style: "border: 2px solid grey; border-radius: 16px;"): {
+		div @(style: "background-color: #E25142; color: white; text-align:center; font-size: 2.2vh; border-top-right-radius: 16px; height: 4vh; border-top-left-radius:16px ; padding: 16px;"): "Successful Records of User Sync From Project Insights" ,
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Object Name : ",
+			span @(style: "font-size: 1.8vh;"): "User"
+		},
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Successful Records",
+			span @(style: "font-size: 1.8vh;"): vars.successfulRecords
+		},
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Timestamp : ",
+			span @(style: "font-size: 1.8vh;"): now() >> "UTC"
+		},
+		div @(style: "background-color: #02A0E1; color: white; text-align:center; font-size: 2.2vh; border-bottom-right-radius: 16px; height: 4vh; border-bottom-left-radius:16px ; padding: 16px;"): "This is an auto-generated e-mail. Do not reply to this e-mail."
+	}
+}]]></ee:set-payload>
+					</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="subject" ><![CDATA[%dw 2.0
+output application/json
+---
+"Success Report of User Sync From Project Insights"]]></ee:set-variable>
+						</ee:variables>
+				</ee:transform>
+					<flow-ref doc:name="common-email-sub-flow" doc:id="e82cd73a-a515-408c-92cd-cb361893a731" name="common-email-sub-flow"/>
+				</foreach>
+			</route>
+			<route >
+				<foreach doc:name="For Each" doc:id="9a8792b5-505c-4f0c-9f04-98ac772cbd21" collection="#[if(!isEmpty(vars.failedRecords))[vars.failedRecords] else []]">
+					<ee:transform doc:name="failure email payload" doc:id="7f741aa7-afae-4087-af2b-91725416363e">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+---
+div @(style: "display: flex; flex-direction: column; align-items: center; justify-content: center;"): {
+	div @(style: "border: 2px solid grey; border-radius: 16px;"): {
+		div @(style: "background-color: #E25142; color: white; text-align:center; font-size: 2.2vh; border-top-right-radius: 16px; height: 4vh; border-top-left-radius:16px ; padding: 16px;"): "Failed Records of User Sync From Project Insights" ,
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Object Name : ",
+			span @(style: "font-size: 1.8vh;"): "User"
+		},
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Failed Records",
+			span @(style: "font-size: 1.8vh;"): vars.failedRecords
+		},
+		div @(style: "padding:18px 18px 2px 18px"): {
+			span @(style: "font-weight: bold; font-size: 1.8vh;"): "Timestamp : ",
+			span @(style: "font-size: 1.8vh;"): now() >> "UTC"
+		},
+		div @(style: "background-color: #02A0E1; color: white; text-align:center; font-size: 2.2vh; border-bottom-right-radius: 16px; height: 4vh; border-bottom-left-radius:16px ; padding: 16px;"): "This is an auto-generated e-mail. Do not reply to this e-mail."
+	}
+}]]></ee:set-payload>
+					</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="subject" ><![CDATA[%dw 2.0
+output application/json
+---
+"Failure Report of User Sync From Project Insights"]]></ee:set-variable>
+						</ee:variables>
+				</ee:transform>
+					<flow-ref doc:name="common-email-sub-flow" doc:id="490225be-453e-4db2-bad9-96edaeab89c0" name="common-email-sub-flow" />
+				</foreach>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="End" doc:id="444579f4-5ee3-4c15-a74a-09fe2b252d2d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Email Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+	</sub-flow>
+	<sub-flow name="common-email-sub-flow" doc:id="8e2b9df7-8607-4806-a3f6-6677dd6b5a6e" >
+		<try doc:name="Try" doc:id="9f3220de-2733-423e-a8c5-43aee802c937" >
+			<email:send doc:name="Send Mail" doc:id="f43ecb5d-5e77-4106-87e7-4f66cb677f2e" config-ref="email-configuration" fromAddress="${email.user}" subject="#[vars.subject]">
+							<email:to-addresses>
+								<email:to-address value="kapish.bhardwaj@caeliusconsulting.com" />
+							</email:to-addresses>
+							<email:cc-addresses>
+								<email:cc-address value="vivek.rathore@caeliusconsulting.com" />
+								<email:cc-address value="mitanshu.garg@caeliusconsulting.com" />
+							</email:cc-addresses>
+						</email:send>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f43f829b-8237-441e-9be0-3628971af362" >
+					<logger level="INFO" doc:name="Email Error Logger" doc:id="f1cd5583-b1c9-4c08-bc84-78e94861b9cf" message='#[output json&#10;---&#10;{&#10;	"flow": flow.name,&#10;	"errorMessage": "Email connectivity issue.",&#10;	"errorDescription": error.description&#10;}]' />
+				</on-error-continue>
+			</error-handler>
+		</try>
 	</sub-flow>
 </mule>
