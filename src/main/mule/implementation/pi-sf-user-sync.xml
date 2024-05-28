@@ -41,7 +41,7 @@ payload]]></ee:set-variable>
 	</sub-flow>
 	<sub-flow name="sf-user-sync-sub-flow" doc:id="8daa50cd-5f5d-439f-b76c-33013be73963" >
 		<logger level="INFO" doc:name="Start" doc:id="9f3179d9-1ab5-4e09-beb4-a1424b1c61f6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "User Retieveal from Project Insights Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<foreach doc:name="Parallel Iteration over SF Query Record" doc:id="09568048-c212-466e-abd0-3e92a8c96426" collection="#[vars.sfResponse]">
+		<foreach doc:name="Iteration over SF Query Record" doc:id="09568048-c212-466e-abd0-3e92a8c96426" collection="#[vars.sfResponse]">
 			<try doc:name="Try" doc:id="f05918d9-7295-42aa-b386-4a2e1c12e0bb" >
 				<ee:transform doc:name="var : httpRequest &amp; sfId" doc:id="05b0fb20-f94f-480b-9144-9cc34d343a77">
 				<ee:message />

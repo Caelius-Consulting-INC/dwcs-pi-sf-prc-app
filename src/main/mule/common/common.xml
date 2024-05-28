@@ -102,6 +102,7 @@ output application/json
 								<email:cc-address value="vivek.rathore@caeliusconsulting.com" />
 								<email:cc-address value="mitanshu.garg@caeliusconsulting.com" />
 							</email:cc-addresses>
+				<email:body contentType="text/html" />
 						</email:send>
 			<error-handler >
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f43f829b-8237-441e-9be0-3628971af362" >
