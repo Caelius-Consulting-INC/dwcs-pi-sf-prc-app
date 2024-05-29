@@ -12,6 +12,17 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 		<flow-ref doc:name="sf-query-sub-flow" doc:id="d8d7f3a3-6c20-4551-8086-5f0d561fe9f7" name="sf-query-sub-flow"/>
 		<flow-ref doc:name="sf-user-sync-sub-flow" doc:id="6d2e510d-a4fc-451a-9fa3-35da40c0bcef" name="sf-user-sync-sub-flow"/>
 		<flow-ref doc:name="common-email-transformation-sub-flow" doc:id="e7297410-bcbd-4595-9b31-6c5caba7f8cf" name="common-email-transformation-sub-flow"/>
+		<ee:transform doc:name="final payload" doc:id="155d7776-c2f6-4c30-9e22-b50fb569a198" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Count of Successful Records" : vars.successfulRecords,
+	"Count of Failed Records" : vars.failedRecords
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<logger level="INFO" doc:name="End" doc:id="89b3dde3-a3e7-4c28-9f61-0c8ac4fd3e00" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights User Sync Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="sf-query-sub-flow" doc:id="c2088ef4-8623-4436-965b-3c672442e138" >
