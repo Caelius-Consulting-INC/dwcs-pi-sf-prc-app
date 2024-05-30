@@ -20,7 +20,7 @@ readUrl(dwlFilePath, 'text/plain')]]></ee:set-variable>
 		<ee:dynamic-evaluate doc:name="JSON Transformation" doc:id="bb7dd01b-232d-46c4-934c-2401bc1574c7" expression="#[vars.dwlFilePath]" >
 			<ee:parameters >#[{payload : payload}]</ee:parameters>
 		</ee:dynamic-evaluate>
-		<ee:transform doc:name="Transform Message" doc:id="ccef3526-baa9-4d5f-bdab-6bdad48c380d" >
+		<ee:transform doc:name="Payload" doc:id="ccef3526-baa9-4d5f-bdab-6bdad48c380d" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output text/csv quoteValues = true, encoding = 'UTF-8', separator = '|'

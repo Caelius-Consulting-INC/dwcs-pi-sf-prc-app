@@ -10,7 +10,7 @@ projectInsights:
     path: "/expense-entry/search"
   User:
     path: "/user/by-email-address"
-  apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MDkyMTQxMTgsImV4cCI6MTczNTYyNDgwMCwic3ViIjoiY2VjOTcyNjYtN2Q0Yy00ZDY5LWJlOTEtYmYyY2FhZDlhNDdiIn0.ndhrlffvAIgAxdd4tEsaZq3DC_amnHfeVQ3H2wftiD62i-9ZOYTCs6GmEEDY2NYYTIqME4rmYyfe7gg8TCL3pA"
+  apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MTcwNzAzMDUsImV4cCI6MjE3NzM4ODAwMCwic3ViIjoiZWEwNDUxMmUtNmMzYi00NjFkLWE2MTktN2VjM2JiYmFkZTRiIn0.WwC-qxI7CgywhDN5XcER8YTwDOG4c04VlUgJn4cRxAafBEBs3Dw6WLP-JcBmmOlWHiHafXQWJWDXNT0Uajpc-A"
 
 sf:
   expirationInterval: "1"

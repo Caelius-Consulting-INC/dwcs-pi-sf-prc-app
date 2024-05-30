@@ -35,7 +35,7 @@
 		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="45eb53e4-174e-4d75-8a81-353fabc50a1f" name="pi-iteration-sub-flow" />
 		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
-	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="started" >
+	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="stopped" >
 		<scheduler doc:name="PI Monthly Scheduler" doc:id="b65ba83c-a876-408a-a4e3-5e822ab78901" >
 			<scheduling-strategy >
 				<cron expression="${cron.monthly}" />
@@ -46,8 +46,8 @@
 		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="22df539f-4c97-4e52-a295-ec80a6774532" >
 			<ee:message />
 			<ee:variables >
-				<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
-				<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+				<ee:set-variable resource="dwl/v-monthlyEndDate.dwl" variableName="endDate" />
+				<ee:set-variable resource="dwl/v-monthlyStartDate.dwl" variableName="startDate" />
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="eea7aaeb-48ed-41c6-95fa-a8d6bd849b08" name="pi-iteration-sub-flow" />

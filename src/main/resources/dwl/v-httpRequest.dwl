@@ -4,7 +4,7 @@ output application/json
 {
 	"apiToken" : Mule::p('projectInsights.apiToken'),
 	"startDate" : vars.startDate,
-	"endDate": payload.endDate,
+	"endDate": vars.endDate,
 	"path" : Mule::p('projectInsights.$(vars.sfObject).path'),
 	"method" : "GET"
 }
