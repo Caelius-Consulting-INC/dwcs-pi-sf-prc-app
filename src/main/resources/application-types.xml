@@ -219,4 +219,5 @@ type java_lang_Object = {|  |} {"typeAlias": "Object",
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#22df539f-4c97-4e52-a295-ec80a6774532"/>
 </types:mule>

@@ -35,7 +35,7 @@
 		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="45eb53e4-174e-4d75-8a81-353fabc50a1f" name="pi-iteration-sub-flow" />
 		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
-	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="stopped" >
+	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="started" >
 		<scheduler doc:name="PI Monthly Scheduler" doc:id="b65ba83c-a876-408a-a4e3-5e822ab78901" >
 			<scheduling-strategy >
 				<cron expression="${cron.monthly}" />

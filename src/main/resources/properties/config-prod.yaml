@@ -1,5 +1,9 @@
 # Prod Configuration
-  
+
+#API Id
+api:
+  id: "19565975"
+
 # Project Insights
 projectInsights:
   host: "deepwater.projectinsight.net"
@@ -29,7 +33,7 @@ salesforce:
   authorizationUrl: "https://deepwater.my.salesforce.com/services/Soap/u/56.0"
   
 sfVar:
-  lineEnding: "CRLF"
+  lineEnding: "LF"
   contentType: "CSV"
   operation: "upsert"
   columnDelimiter: "PIPE"

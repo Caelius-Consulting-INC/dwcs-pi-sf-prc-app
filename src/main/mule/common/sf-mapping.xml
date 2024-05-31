@@ -23,7 +23,7 @@ readUrl(dwlFilePath, 'text/plain')]]></ee:set-variable>
 		<ee:transform doc:name="Payload" doc:id="ccef3526-baa9-4d5f-bdab-6bdad48c380d" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output text/csv quoteValues = true, encoding = 'UTF-8', separator = '|'
+output text/csv quoteValues = true, encoding = 'UTF-8', separator = '|', escape = "\""
 ---
 payload]]></ee:set-payload>
 			</ee:message>
@@ -53,11 +53,9 @@ output application/x-www-form-urlencoded
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:cache doc:name="Cache" doc:id="5ad2e2be-cccf-4122-8e49-bd74275c0ac6" cachingStrategy-ref="sf-token-caching-strategy" >
-			<http:request method="POST" doc:name="sf-token" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sfState.oAuthToken}" >
-				<http:body ><![CDATA[#[vars.salesforceVars]]]></http:body>
+		<http:request method="POST" doc:name="sf-token" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sfState.oAuthToken}">
+				<http:body><![CDATA[#[vars.salesforceVars]]]></http:body>
 			</http:request>
-		</ee:cache>
 		<ee:transform doc:name="accessToken" doc:id="a85f77b2-33f7-4a46-b80a-b96aa8a917a3" >
 			<ee:message />
 			<ee:variables >

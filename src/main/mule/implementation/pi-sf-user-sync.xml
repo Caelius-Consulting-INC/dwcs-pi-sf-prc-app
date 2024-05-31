@@ -18,8 +18,8 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 output application/json
 ---
 {
-	"Count of Successful Records" : vars.successfulRecords,
-	"Count of Failed Records" : vars.failedRecords
+	"Successful Records" : vars.successfulRecords,
+	"Failed Records" : vars.failedRecords
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

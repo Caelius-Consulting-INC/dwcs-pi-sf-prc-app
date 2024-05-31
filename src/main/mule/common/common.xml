@@ -96,11 +96,12 @@ output application/json
 		<try doc:name="Try" doc:id="9f3220de-2733-423e-a8c5-43aee802c937" >
 			<email:send doc:name="Send Mail" doc:id="f43ecb5d-5e77-4106-87e7-4f66cb677f2e" config-ref="email-configuration" fromAddress="${email.user}" subject="#[vars.subject]">
 							<email:to-addresses>
-								<email:to-address value="kapish.bhardwaj@caeliusconsulting.com" />
+								<email:to-address value="tim.britton@stoprust.com" />
 							</email:to-addresses>
 							<email:cc-addresses>
 								<email:cc-address value="vivek.rathore@caeliusconsulting.com" />
 								<email:cc-address value="mitanshu.garg@caeliusconsulting.com" />
+					<email:cc-address value="kapish.bhardwaj@caeliusconsulting.com" />
 							</email:cc-addresses>
 				<email:body contentType="text/html" />
 						</email:send>
