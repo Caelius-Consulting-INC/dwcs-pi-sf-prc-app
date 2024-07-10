@@ -6,6 +6,6 @@ output application/json
 	"startDate": vars.startDate,
 	"endDate": vars.endDate,
 	"projectIds": vars.activeProjectIds,
-	"path": Mule::p('projectInsights.$(vars.sfObject).path'),
+	"path": Mule::p('projectInsights.$(vars.piSyncObject).path'),
 	"method": "GET"
 }

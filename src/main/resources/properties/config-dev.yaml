@@ -8,12 +8,20 @@ api:
 projectInsights:
   host: "deepwater.projectinsight.net"
   basePath: "/api"
-  Time_Entry__c:
+  TimeEntry:
     path: "/time-entry/search"
-  Expense_Entry__c:
+  ExpenseEntry:
     path: "/expense-entry/search"
   User:
     path: "/user/by-email-address"
+  ActiveProjects:
+    path: "/project/active"
+  InactiveProjects:
+    path: "/project/inactive"
+  ArchiveProjects:
+    path: "/project/archive"
+  Task:
+    path: "/task/list-by-projects"
   apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MTcwNzAzMDUsImV4cCI6MjE3NzM4ODAwMCwic3ViIjoiZWEwNDUxMmUtNmMzYi00NjFkLWE2MTktN2VjM2JiYmFkZTRiIn0.WwC-qxI7CgywhDN5XcER8YTwDOG4c04VlUgJn4cRxAafBEBs3Dw6WLP-JcBmmOlWHiHafXQWJWDXNT0Uajpc-A"
 
 sf:
@@ -37,7 +45,18 @@ sfVar:
   contentType: "CSV"
   operation: "upsert"
   columnDelimiter: "PIPE"
-  externalId: "Id__c"
+  TimeEntry:
+    externalId: "Id__c"
+  ExpenseEntry:
+    externalId: "Id__c"
+  ActiveProjects:
+    externalId: "Id__c"
+  InactiveProjects:
+    externalId: "Id__c"
+  ArchiveProjects:
+    externalId: "Id__c"
+  Task:
+    externalId: "Id__c"
   
 response:
   timeout: "600000"

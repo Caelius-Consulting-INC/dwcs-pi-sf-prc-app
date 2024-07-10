@@ -12,8 +12,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<ee:transform doc:name="var : startDate &amp; endDate" doc:id="18820ff6-98b4-4546-ba87-525b9bca7d04">
 					<ee:message />
 					<ee:variables>
-						<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
-						<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+						<ee:set-variable resource="dwl/v-endDate.dwl" variableName="endDate" />
+						<ee:set-variable resource="dwl/v-startDate.dwl" variableName="startDate" />
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="82cae787-b099-4d3e-9b74-bc02882f828e" name="retrieve-project-insights-data-sub-flow" />

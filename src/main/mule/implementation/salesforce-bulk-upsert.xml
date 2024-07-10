@@ -15,7 +15,7 @@ output application/json
 ---
 {
     "object" : vars.sfObject,
-    "externalIdFieldName" : Mule::p('sfVar.externalId'),
+    "externalIdFieldName" : Mule::p('sfVar.$(vars.piSyncObjects).externalId'),
     "contentType" : Mule::p('sfVar.contentType'),
     "operation" : Mule::p('sfVar.operation'),
     "lineEnding" : Mule::p('sfVar.lineEnding'),

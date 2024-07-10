@@ -25,7 +25,7 @@
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="72e169b5-abb8-458d-90ce-e8b395c92271" name="global-api-common-entry-sub-flow" />
 		<logger level="INFO" doc:name="Start" doc:id="8b2c9673-46c8-41a5-9c28-b80d90d549f3" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<ee:transform doc:name="var: piSyncObjects" doc:id="d7990a0e-af7d-4e39-b4de-89e1ca248cab" >
+		<ee:transform doc:name="var: piSyncObjects &amp; scheduleJob" doc:id="d7990a0e-af7d-4e39-b4de-89e1ca248cab" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
@@ -38,6 +38,7 @@ output application/json
 	"ActiveProjects",
 	"InactiveProjects"
 ]]]></ee:set-variable>
+				<ee:set-variable variableName="scheduleJob" ><![CDATA["Daily"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="var: sfObject" doc:id="1a7d6903-75c2-41e8-ac46-c75fcf754068" >
@@ -65,7 +66,7 @@ else "Project__c"]]></ee:set-variable>
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="5698b944-cd23-444e-a37b-e99da603c4c6" name="global-api-common-entry-sub-flow" />
 		<logger level="INFO" doc:name="Start" doc:id="d3e2f1cb-5e68-464b-a73a-1ea5fe0d7c21" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<ee:transform doc:name="var: piSyncObjects" doc:id="614a8ef3-e381-4e7a-a4fd-ec3d42f1e4c8" >
+		<ee:transform doc:name="var: piSyncObjects &amp; scheduleJob" doc:id="614a8ef3-e381-4e7a-a4fd-ec3d42f1e4c8" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="piSyncObjects" ><![CDATA[%dw 2.0
@@ -76,6 +77,7 @@ output application/json
 	"ExpenseEntry",
 	"ArchieveProjects"
 ]]]></ee:set-variable>
+				<ee:set-variable variableName="scheduleJob" ><![CDATA["Monthly"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="var: sfObject" doc:id="bed41816-3c8c-4ec1-9697-dbd47d8a4934" >
