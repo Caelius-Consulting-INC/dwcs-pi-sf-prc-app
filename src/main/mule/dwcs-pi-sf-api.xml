@@ -25,14 +25,36 @@
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="72e169b5-abb8-458d-90ce-e8b395c92271" name="global-api-common-entry-sub-flow" />
 		<logger level="INFO" doc:name="Start" doc:id="8b2c9673-46c8-41a5-9c28-b80d90d549f3" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="68758408-81f9-474e-8f7e-2718c52d4893" >
-			<ee:message />
+		<ee:transform doc:name="var: piSyncObjects" doc:id="d7990a0e-af7d-4e39-b4de-89e1ca248cab" >
+			<ee:message >
+			</ee:message>
 			<ee:variables >
-				<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
-				<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+				<ee:set-variable variableName="piSyncObjects" ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	"TimeEntry",
+	"ExpenseEntry",
+	"ActiveProjects",
+	"InactiveProjects"
+]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="45eb53e4-174e-4d75-8a81-353fabc50a1f" name="pi-iteration-sub-flow" />
+		<ee:transform doc:name="var: sfObject" doc:id="1a7d6903-75c2-41e8-ac46-c75fcf754068" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+output application/java
+---
+if ( vars.piSyncObjects == "TimeEntry" ) "Time_Entry__c"
+else if ( vars.piSyncObjects == "ExpenseEntry" ) "Expense_Entry__c"
+else "Project__c"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="a7c8517c-e16c-4e2d-a9bb-1dfb34dc4cb1" collection="#[vars.piSyncObjects]">
+			<flow-ref doc:name="pi-sf-sync-subflow" doc:id="fe66c126-00af-4a66-bc29-33abd4e104f2" name="pi-sf-sync-subflow"/>
+		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
 	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="started" >
@@ -43,14 +65,34 @@
 		</scheduler>
 		<flow-ref doc:name="global-api-common-entry-sub-flow" doc:id="5698b944-cd23-444e-a37b-e99da603c4c6" name="global-api-common-entry-sub-flow" />
 		<logger level="INFO" doc:name="Start" doc:id="d3e2f1cb-5e68-464b-a73a-1ea5fe0d7c21" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Started",&#10;	correlationId: vars.correlationId&#10;}]' />
-		<ee:transform doc:name="var : startDate &amp; endDate" doc:id="22df539f-4c97-4e52-a295-ec80a6774532" >
+		<ee:transform doc:name="var: piSyncObjects" doc:id="614a8ef3-e381-4e7a-a4fd-ec3d42f1e4c8" >
 			<ee:message />
 			<ee:variables >
-				<ee:set-variable resource="dwl/v-monthlyEndDate.dwl" variableName="endDate" />
-				<ee:set-variable resource="dwl/v-monthlyStartDate.dwl" variableName="startDate" />
+				<ee:set-variable variableName="piSyncObjects" ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	"TimeEntry",
+	"ExpenseEntry",
+	"ArchieveProjects"
+]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="pi-iteration-sub-flow" doc:id="eea7aaeb-48ed-41c6-95fa-a8d6bd849b08" name="pi-iteration-sub-flow" />
+		<ee:transform doc:name="var: sfObject" doc:id="bed41816-3c8c-4ec1-9697-dbd47d8a4934" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+output application/java
+---
+if ( vars.piSyncObjects == "TimeEntry" ) "Time_Entry__c"
+else if( vars.piSyncObjects == "ExpenseEntry") "Expense_Entry__c"
+else "Project__c"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="4039c355-d3a8-4c5f-97d6-0a8a56e7d30b" collection="#[vars.piSyncObjects]" >
+			<flow-ref doc:name="pi-sf-sync-subflow" doc:id="cc5450d4-27e5-40e9-aefb-6ab4b30ed94c" name="pi-sf-sync-subflow" />
+		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="e6182feb-781a-43ed-897d-6712380181a2" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
 </mule>

@@ -2,9 +2,10 @@
 output application/json
 ---
 {
-	"apiToken" : Mule::p('projectInsights.apiToken'),
-	"startDate" : vars.startDate,
+	"apiToken": Mule::p('projectInsights.apiToken'),
+	"startDate": vars.startDate,
 	"endDate": vars.endDate,
-	"path" : Mule::p('projectInsights.$(vars.sfObject).path'),
-	"method" : "GET"
+	"projectIds": vars.activeProjectIds,
+	"path": Mule::p('projectInsights.$(vars.sfObject).path'),
+	"method": "GET"
 }

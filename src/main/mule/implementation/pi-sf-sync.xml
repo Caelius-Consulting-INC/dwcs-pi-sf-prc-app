@@ -5,33 +5,42 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<sub-flow name="pi-iteration-sub-flow" doc:id="2336a48d-0184-433b-a223-e4186058914a" >
-		<logger level="INFO" doc:name="Start" doc:id="8ca24046-101b-4f2b-a163-ed73dc471679" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]'/>
-		<ee:transform doc:name="Sync Objects" doc:id="5d19b215-4a21-4012-a7a7-35426487cd23" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-[
-	"Time_Entry__c",
-	"Expense_Entry__c"
-]]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<foreach doc:name="Iterate Over Each Object" doc:id="3a219eb2-643c-4228-827f-d974f4136639" collection="#[payload]">
-			<ee:transform doc:name="var : sfObject" doc:id="e3a81e92-80bc-48eb-be32-fcdd83284b1c">
-			<ee:message>
-			</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-variable>
-				</ee:variables>
-		</ee:transform>
-			<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="d977b83b-9704-4d2b-bcc9-7fa3c562d318" name="retrieve-project-insights-data-sub-flow"/>
-		</foreach>
-		<logger level="INFO" doc:name="End" doc:id="ce5d9614-5f90-40aa-b002-191414aa18c6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]'/>
+	<sub-flow name="pi-sf-sync-subflow" doc:id="857c5ae6-a4fe-4a76-a850-5d59fee6739f">
+		<logger level="INFO" doc:name="Start" doc:id="9450c4bd-0363-4c22-b0a0-91c8d11ef752" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "PI SF Sync Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<choice doc:name="Entity?" doc:id="7be2a5c1-8ec3-48f7-8a4c-916ecf9e171a">
+			<when expression='#[vars.piSyncObjects == "TimeEntry" or vars.piSyncObjects == "ExpenseEntry"]'>
+				<ee:transform doc:name="var : startDate &amp; endDate" doc:id="18820ff6-98b4-4546-ba87-525b9bca7d04">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable resource="dwl/v-dailyStartDate.dwl" variableName="startDate" />
+						<ee:set-variable resource="dwl/v-dailyEndDate.dwl" variableName="endDate" />
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="82cae787-b099-4d3e-9b74-bc02882f828e" name="retrieve-project-insights-data-sub-flow" />
+				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="338801d3-dc93-49b0-975a-223e666c47ab" name="sf-mapping-sub-flow" />
+				<remove-variable doc:name="Remove startDate Variable" doc:id="41e3e8df-78eb-4ee3-b9f6-56595e48c229" variableName="startDate"/>
+				<remove-variable doc:name="Remove endDate Variable" doc:id="9f9b86cd-de04-4b13-ab33-1a0b233304c4" variableName="endDate"/>
+			</when>
+			<when expression='#[vars.piSyncObjects == "ActiveProjects"]'>
+				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="64c87a55-0754-41ef-abad-e3d9a858c025" name="retrieve-project-insights-data-sub-flow" />
+				<ee:transform doc:name="var: activeProjectIds" doc:id="83da7cc3-3756-411d-b57e-c2b7993d4711" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable resource="dwl/v-activeProjectIds.dwl" variableName="activeProjectIds" />
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="4ccfbfd9-5f78-4c71-bc9e-14e9da9d886c" name="sf-mapping-sub-flow" />
+				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="56d87194-6af8-4eb1-962b-de08e0e7fdb8" name="retrieve-project-insights-data-sub-flow" />
+				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="1f0b4995-a1e4-4bd2-a6ac-02261192a423" name="sf-mapping-sub-flow" />
+				<remove-variable doc:name="Remove ActiveProjectIds Variable" doc:id="328c51ff-9804-4199-b70d-3bb5db5db52e" variableName="activeProjectIds"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="e83ea9a8-55c5-4d4f-a6e8-4d1a3d8c0dbe" name="retrieve-project-insights-data-sub-flow" />
+				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="2c5d700b-8934-49ee-b907-05f16cc84145" name="sf-mapping-sub-flow" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End" doc:id="7e7987ef-e719-4935-9b55-ce168e670e95" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "PI SF Sync Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="retrieve-project-insights-data-sub-flow" doc:id="d3f915be-fe3e-47b2-bebe-c779cd256310" >
 		<logger level="INFO" doc:name="Start" doc:id="0245b110-0343-4d07-870a-4d1d97262920" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
@@ -49,11 +58,11 @@ output application/json
 ---
 {
 	"api-token" : vars.httpRequest.apiToken,
-	"startDate" : vars.httpRequest.startDate,
-	"endDate" : vars.httpRequest.endDate
+	("startDate" : vars.httpRequest.startDate)if (!isEmpty(vars.httpRequest.startDate)),
+	("endDate" : vars.httpRequest.endDate)if (!isEmpty(vars.httpRequest.endDate)),
+	("projectIds": vars.httpRequest.projectIds)if (!isEmpty(vars.httpRequest.projectIds))
 }]]]></http:query-params>
 		</http:request>
-		<flow-ref doc:name="sf-mapping-sub-flow" doc:id="338801d3-dc93-49b0-975a-223e666c47ab" name="sf-mapping-sub-flow"/>
 		<logger level="INFO" doc:name="End" doc:id="d76282cf-5cd8-42a5-ab40-55bbf4ee536b" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 </mule>
