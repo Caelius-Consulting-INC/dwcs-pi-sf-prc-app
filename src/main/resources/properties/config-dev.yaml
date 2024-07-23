@@ -22,6 +22,14 @@ projectInsights:
     path: "/project/archive"
   Task:
     path: "/task/list-by-projects"
+  Department:
+    path: "/department/list-all"
+  ProjectStatus:
+    path: "/project-status/list-all"
+  ProjectType: 
+    path: "/project-type/list-all"
+  ResourceType:
+    path: "/resource-type/list-all"
   apiToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MTcwNzAzMDUsImV4cCI6MjE3NzM4ODAwMCwic3ViIjoiZWEwNDUxMmUtNmMzYi00NjFkLWE2MTktN2VjM2JiYmFkZTRiIn0.WwC-qxI7CgywhDN5XcER8YTwDOG4c04VlUgJn4cRxAafBEBs3Dw6WLP-JcBmmOlWHiHafXQWJWDXNT0Uajpc-A"
 
 sf:

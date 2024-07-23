@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<sub-flow name="salesforce-bulk-upsert-sub-flow" doc:id="30a66c3e-cd30-4c0c-bdec-0d3a621c3b44" >
-		<logger level="INFO" doc:name="Start" doc:id="66b78bf9-a4dc-40ce-9f22-435844407d37" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<logger level="INFO" doc:name="Start" doc:id="66b78bf9-a4dc-40ce-9f22-435844407d37" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Started",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
 		<ee:transform doc:name="var : ingestData" doc:id="2ae1ca31-2f5c-41d0-9c39-65ef19753cf2">
 			<ee:message />
 			<ee:variables>
@@ -15,7 +15,7 @@ output application/json
 ---
 {
     "object" : vars.sfObject,
-    "externalIdFieldName" : Mule::p('sfVar.$(vars.piSyncObjects).externalId'),
+    "externalIdFieldName" : Mule::p('sfVar.$(vars.piSyncObject).externalId'),
     "contentType" : Mule::p('sfVar.contentType'),
     "operation" : Mule::p('sfVar.operation'),
     "lineEnding" : Mule::p('sfVar.lineEnding'),
@@ -59,6 +59,6 @@ output application/json
 {"state":"UploadComplete"}]]]></http:body>
 			<http:headers><![CDATA[#["Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
 		</http:request>
-		<logger level="INFO" doc:name="END" doc:id="3128b6f5-fa78-4268-8838-52d3e3584f7d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<logger level="INFO" doc:name="END" doc:id="3128b6f5-fa78-4268-8838-52d3e3584f7d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Ended",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
 	</sub-flow>
 </mule>

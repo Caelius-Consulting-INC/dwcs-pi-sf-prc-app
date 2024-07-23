@@ -8,12 +8,16 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<sub-flow name="pi-sf-sync-subflow" doc:id="857c5ae6-a4fe-4a76-a850-5d59fee6739f">
 		<logger level="INFO" doc:name="Start" doc:id="9450c4bd-0363-4c22-b0a0-91c8d11ef752" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "PI SF Sync Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
 		<choice doc:name="Entity?" doc:id="7be2a5c1-8ec3-48f7-8a4c-916ecf9e171a">
-			<when expression='#[vars.piSyncObjects == "TimeEntry" or vars.piSyncObjects == "ExpenseEntry"]'>
-				<ee:transform doc:name="var : startDate &amp; endDate" doc:id="18820ff6-98b4-4546-ba87-525b9bca7d04">
+			<when expression='#[payload == "TimeEntry" or payload == "ExpenseEntry"]'>
+				<ee:transform doc:name="var : startDate, endDate &amp; piSyncObject" doc:id="18820ff6-98b4-4546-ba87-525b9bca7d04">
 					<ee:message />
 					<ee:variables>
 						<ee:set-variable resource="dwl/v-endDate.dwl" variableName="endDate" />
 						<ee:set-variable resource="dwl/v-startDate.dwl" variableName="startDate" />
+						<ee:set-variable variableName="piSyncObject" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="82cae787-b099-4d3e-9b74-bc02882f828e" name="retrieve-project-insights-data-sub-flow" />
@@ -21,7 +25,17 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<remove-variable doc:name="Remove startDate Variable" doc:id="41e3e8df-78eb-4ee3-b9f6-56595e48c229" variableName="startDate"/>
 				<remove-variable doc:name="Remove endDate Variable" doc:id="9f9b86cd-de04-4b13-ab33-1a0b233304c4" variableName="endDate"/>
 			</when>
-			<when expression='#[vars.piSyncObjects == "ActiveProjects"]'>
+			<when expression='#[payload == "ActiveProjects"]'>
+				<ee:transform doc:name="var: piSyncObject" doc:id="1a0d3bd2-d1a1-46d5-849c-46f005b14720">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="piSyncObject" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="64c87a55-0754-41ef-abad-e3d9a858c025" name="retrieve-project-insights-data-sub-flow" />
 				<ee:transform doc:name="var: activeProjectIds" doc:id="83da7cc3-3756-411d-b57e-c2b7993d4711" >
 					<ee:message >
@@ -31,11 +45,47 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="4ccfbfd9-5f78-4c71-bc9e-14e9da9d886c" name="sf-mapping-sub-flow" />
+				<ee:transform doc:name="var: sfObject" doc:id="8503cac9-897a-4e26-ba09-843b7970d178">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+output application/json
+---
+"project_task__c"]]></ee:set-variable>
+						<ee:set-variable variableName="piSyncObject" ><![CDATA[%dw 2.0
+output application/json
+---
+"Task"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="56d87194-6af8-4eb1-962b-de08e0e7fdb8" name="retrieve-project-insights-data-sub-flow" />
 				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="1f0b4995-a1e4-4bd2-a6ac-02261192a423" name="sf-mapping-sub-flow" />
 				<remove-variable doc:name="Remove ActiveProjectIds Variable" doc:id="328c51ff-9804-4199-b70d-3bb5db5db52e" variableName="activeProjectIds"/>
 			</when>
+			<when expression='#[payload == "Department" or payload == "ProjectStatus" or payload == "ProjectType" or payload == "ResourceType"]'>
+				<ee:transform doc:name="var: piSyncObject" doc:id="93e161f6-b715-476b-92dc-cf6b213d81dd">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="piSyncObject"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="48752e3f-ea3f-4f4b-ac01-374fba805066" name="retrieve-project-insights-data-sub-flow" />
+				<flow-ref doc:name="salesforce-metadat-upsert-sub-flow" doc:id="1fced60f-4ecd-484f-bd81-dcf7c8823500" name="salesforce-metadata-upsert-sub-flow"/>
+			</when>
 			<otherwise >
+				<ee:transform doc:name="var: piSyncObject" doc:id="2088190a-2bf9-48c2-89b7-93d42b311424">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="piSyncObject"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="e83ea9a8-55c5-4d4f-a6e8-4d1a3d8c0dbe" name="retrieve-project-insights-data-sub-flow" />
 				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="2c5d700b-8934-49ee-b907-05f16cc84145" name="sf-mapping-sub-flow" />
 			</otherwise>
@@ -43,7 +93,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<logger level="INFO" doc:name="End" doc:id="7e7987ef-e719-4935-9b55-ce168e670e95" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "PI SF Sync Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="retrieve-project-insights-data-sub-flow" doc:id="d3f915be-fe3e-47b2-bebe-c779cd256310" >
-		<logger level="INFO" doc:name="Start" doc:id="0245b110-0343-4d07-870a-4d1d97262920" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<logger level="INFO" doc:name="Start" doc:id="0245b110-0343-4d07-870a-4d1d97262920" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Started",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
 		<ee:transform doc:name="var : httpRequest" doc:id="7ee6cca2-0a61-4db0-ba0d-97ce990e71dc" >
 			<ee:message >
 			</ee:message>
@@ -63,6 +113,6 @@ output application/json
 	("projectIds": vars.httpRequest.projectIds)if (!isEmpty(vars.httpRequest.projectIds))
 }]]]></http:query-params>
 		</http:request>
-		<logger level="INFO" doc:name="End" doc:id="d76282cf-5cd8-42a5-ab40-55bbf4ee536b" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
+		<logger level="INFO" doc:name="End" doc:id="d76282cf-5cd8-42a5-ab40-55bbf4ee536b" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Ended",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
 	</sub-flow>
 </mule>
