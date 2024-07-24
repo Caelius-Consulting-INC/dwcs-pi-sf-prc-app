@@ -14,6 +14,16 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 			</ee:variables>
 		</ee:transform>
 	</sub-flow>
+	<sub-flow name="entity-selection-sub-flow" doc:id="befc638e-2769-453d-a48e-6ab3dc977084" >
+		<choice doc:name="Entity?" doc:id="3026f905-0991-4db6-9864-3f9dee1a8f82" >
+			<when expression='#[payload ~= "user"]'>
+				<flow-ref doc:name="pi-sf-user-sync-sub-flow" doc:id="6d649d98-666d-4b92-a63f-b2544c3edec5" name="pi-sf-user-sync-sub-flow"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="pi-sf-sync-subflow" doc:id="9c06e6ae-e776-4fae-be07-d8fddc41d8e2" name="pi-sf-sync-subflow"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
 	<sub-flow name="common-email-transformation-sub-flow" doc:id="67055be0-ac6a-40a0-8734-6209c993b2dd" >
 		<logger level="INFO" doc:name="Start" doc:id="d011d57f-e1c1-4edf-83de-42c84a9f8674" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Email Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]' />
 		<scatter-gather doc:name="Success/Failure Mail" doc:id="76adfce3-4496-4913-ac68-578f0589333f" >

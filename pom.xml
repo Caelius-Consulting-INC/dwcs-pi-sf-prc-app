@@ -44,13 +44,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>548cf115-8bab-445f-9819-3c34bc405cbc</groupId>
-			<artifactId>dwcs-pi-sf-api</artifactId>
-			<version>1.0.0</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>com.mulesoft.modules</groupId>
 			<artifactId>mule-secure-configuration-property-module</artifactId>
 			<version>1.2.7</version>
@@ -85,6 +78,13 @@
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.10.4</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>548cf115-8bab-445f-9819-3c34bc405cbc</groupId>
+			<artifactId>dwcs-pi-sf-api</artifactId>
+			<version>1.0.1</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 
