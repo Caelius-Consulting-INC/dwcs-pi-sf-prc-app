@@ -47,6 +47,7 @@ else ["Resource_Type__mdt.$(vars.recordId)"]]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 			<salesforce:read-metadata type="CustomMetadata" doc:name="Read metadata" doc:id="d7ef9818-7a76-4d24-9de5-e614b08e94e1" config-ref="salesforce-configuration" >
+				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}"/>
 				<salesforce:full-names ><![CDATA[#[vars.sfMetadataObject]]]></salesforce:full-names>
 			</salesforce:read-metadata>
 			<ee:transform doc:name="Payload Transformation" doc:id="b4f835c5-8e5e-4be6-9a1e-bd0affedc818" >
@@ -54,8 +55,10 @@ else ["Resource_Type__mdt.$(vars.recordId)"]]]></ee:set-variable>
 					<ee:set-payload resource="dwl/p-sfMetadataMapping.dwl" />
 				</ee:message>
 			</ee:transform>
-			<logger level="INFO" doc:name="Logger" doc:id="1bd771c5-71e0-4c88-8e90-b329c19a8640" message="#[output json&#10;---&#10;payload]" />
-			<salesforce:upsert-metadata type="CustomMetadata" doc:name="Upsert metadata" doc:id="12a42992-113b-4b51-b30e-3e0375d161aa" config-ref="salesforce-configuration" />
+			<logger level="DEBUG" doc:name="Debug Logger" doc:id="0eb967cf-37d4-49b0-87d3-9d017c0aaaa2" message="#[output json --- payload]" category="org.mule.extension.salesforce"/>
+			<salesforce:upsert-metadata type="CustomMetadata" doc:name="Upsert metadata" doc:id="12a42992-113b-4b51-b30e-3e0375d161aa" config-ref="salesforce-configuration" >
+				<reconnect count="${reconnection.attempts}" frequency="${reconnection.frequency}"/>
+			</salesforce:upsert-metadata>
 			<logger level="INFO" doc:name="Upsert Metadata Output" doc:id="9a35cb91-eb4c-4c66-9805-c008655b3afa" message="#[output json --- payload]" />
 		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="3b7215d8-8049-4d04-87de-56a31a2771f8" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Metadata Upsert Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />

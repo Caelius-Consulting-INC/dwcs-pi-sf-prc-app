@@ -90,7 +90,6 @@ payload]]></ee:set-variable>
 				<flow-ref doc:name="sf-mapping-sub-flow" doc:id="2c5d700b-8934-49ee-b907-05f16cc84145" name="sf-mapping-sub-flow" />
 			</otherwise>
 		</choice>
-		<logger level="INFO" doc:name="End" doc:id="7e7987ef-e719-4935-9b55-ce168e670e95" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "PI SF Sync Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 	<sub-flow name="retrieve-project-insights-data-sub-flow" doc:id="d3f915be-fe3e-47b2-bebe-c779cd256310" >
 		<logger level="INFO" doc:name="Start" doc:id="0245b110-0343-4d07-870a-4d1d97262920" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Retrieval Sub Flow Started",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />

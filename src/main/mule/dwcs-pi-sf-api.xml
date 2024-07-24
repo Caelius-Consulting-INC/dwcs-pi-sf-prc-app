@@ -17,7 +17,7 @@
     <flow name="get:\query:dwcs-pi-sf-api-config">
 		<flow-ref doc:name="pi-sf-user-sync-sub-flow" doc:id="17fcc729-72d5-4ebc-96f1-2b655b154470" name="pi-sf-user-sync-sub-flow" />
     </flow>
-	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="e79934b0-c3da-44cb-a31e-79fb5f3c3079" initialState="stopped" >
+	<flow name="dwcs-pi-sf-prc-app-daily-flow" doc:id="e79934b0-c3da-44cb-a31e-79fb5f3c3079">
 		<scheduler doc:name="PI Daily Scheduler" doc:id="ce58c016-4d1e-42d2-b439-65ac6ce242a9" >
 			<scheduling-strategy >
 				<cron expression="${cron.daily}" />
@@ -41,24 +41,24 @@ output application/json
 				<ee:set-variable variableName="scheduleJob" ><![CDATA["Daily"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="var: sfObject" doc:id="1a7d6903-75c2-41e8-ac46-c75fcf754068" >
-			<ee:message >
+		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="a7c8517c-e16c-4e2d-a9bb-1dfb34dc4cb1" collection="#[vars.piSyncObjects]">
+			<ee:transform doc:name="var: sfObject" doc:id="1a7d6903-75c2-41e8-ac46-c75fcf754068">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="sfObject"><![CDATA[%dw 2.0
 output application/java
 ---
-if ( vars.piSyncObjects == "TimeEntry" ) "Time_Entry__c"
-else if ( vars.piSyncObjects == "ExpenseEntry" ) "Expense_Entry__c"
+if ( payload == "TimeEntry" ) "Time_Entry__c"
+else if ( payload == "ExpenseEntry" ) "Expense_Entry__c"
 else "Project__c"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="a7c8517c-e16c-4e2d-a9bb-1dfb34dc4cb1" collection="#[vars.piSyncObjects]">
 			<flow-ref doc:name="pi-sf-sync-subflow" doc:id="fe66c126-00af-4a66-bc29-33abd4e104f2" name="pi-sf-sync-subflow"/>
 		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="9d97d3cc-88f4-4f47-84db-dc7dbf6ac4fe" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</flow>
-	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d" initialState="started">
+	<flow name="dwcs-pi-sf-prc-app-monthly-flow" doc:id="2cd5694f-86e8-4e05-b771-970032d1944d">
 		<scheduler doc:name="PI Monthly Scheduler" doc:id="b65ba83c-a876-408a-a4e3-5e822ab78901" >
 			<scheduling-strategy >
 				<cron expression="${cron.monthly}" />
@@ -73,9 +73,9 @@ else "Project__c"]]></ee:set-variable>
 output application/json
 ---
 [
-//	"TimeEntry",
-//	"ExpenseEntry",
-//	"ArchiveProjects",
+	"TimeEntry",
+	"ExpenseEntry",
+	"ArchiveProjects",
 	"Department",
 	"ProjectStatus",
 	"ProjectType",
@@ -84,20 +84,20 @@ output application/json
 				<ee:set-variable variableName="scheduleJob" ><![CDATA["Monthly"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="var: sfObject" doc:id="bed41816-3c8c-4ec1-9697-dbd47d8a4934" >
-			<ee:message >
+		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="4039c355-d3a8-4c5f-97d6-0a8a56e7d30b" collection="#[vars.piSyncObjects]" >
+			<ee:transform doc:name="var: sfObject" doc:id="bed41816-3c8c-4ec1-9697-dbd47d8a4934">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="sfObject" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="sfObject"><![CDATA[%dw 2.0
 output application/json
 ---
-if ( vars.piSyncObjects == "TimeEntry" ) "Time_Entry__c"
-else if( vars.piSyncObjects == "ExpenseEntry") "Expense_Entry__c"
-else if(vars.piSyncObjects == "ArchiveProjects") "Project__c"
+if ( payload == "TimeEntry" ) "Time_Entry__c"
+else if ( payload == "ExpenseEntry" ) "Expense_Entry__c"
+else if ( payload == "ArchiveProjects" ) "Project__c"
 else ""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<foreach doc:name="Iterate Over PI Sync Objects" doc:id="4039c355-d3a8-4c5f-97d6-0a8a56e7d30b" collection="#[vars.piSyncObjects]" >
 			<flow-ref doc:name="pi-sf-sync-subflow" doc:id="cc5450d4-27e5-40e9-aefb-6ab4b30ed94c" name="pi-sf-sync-subflow" />
 		</foreach>
 		<logger level="INFO" doc:name="End" doc:id="e6182feb-781a-43ed-897d-6712380181a2" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Master Sync between Project Insights and SalesForce Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
