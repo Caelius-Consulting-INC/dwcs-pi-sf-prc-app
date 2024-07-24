@@ -15,7 +15,7 @@ output application/json
 payload filter (!isEmpty($.Name))]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<foreach doc:name="Iterate on Each Record" doc:id="3a7aab1f-9dbd-4435-b12f-ec39eab824a0" collection="#[payload]">
+		<parallel-foreach doc:name="Parallel Iteration on Each Record" doc:id="3a7aab1f-9dbd-4435-b12f-ec39eab824a0" collection="#[payload]">
 			<ee:transform doc:name="var: record" doc:id="df09f3ca-f774-4040-8894-a1e8dea9fb86" >
 				<ee:message />
 				<ee:variables >
@@ -59,8 +59,8 @@ else ["Resource_Type__mdt.$(vars.recordId)"]]]></ee:set-variable>
 			<salesforce:upsert-metadata type="CustomMetadata" doc:name="Upsert metadata" doc:id="12a42992-113b-4b51-b30e-3e0375d161aa" config-ref="salesforce-configuration" >
 				<reconnect count="${reconnection.attempts}" frequency="${reconnection.frequency}"/>
 			</salesforce:upsert-metadata>
-			<logger level="INFO" doc:name="Upsert Metadata Output" doc:id="9a35cb91-eb4c-4c66-9805-c008655b3afa" message="#[output json --- payload]" />
-		</foreach>
+			<logger level="DEBUG" doc:name="Upsert Metadata Output" doc:id="9a35cb91-eb4c-4c66-9805-c008655b3afa" message="#[output json --- payload]" category="org.mule.extension.salesforce"/>
+		</parallel-foreach>
 		<logger level="INFO" doc:name="End" doc:id="3b7215d8-8049-4d04-87de-56a31a2771f8" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Metadata Upsert Sub Flow Ended",&#10;	correlationId: vars.correlationId&#10;}]' />
 	</sub-flow>
 </mule>
