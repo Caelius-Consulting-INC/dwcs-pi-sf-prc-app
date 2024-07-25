@@ -70,7 +70,7 @@ output application/json
 						<ee:set-variable variableName="piSyncObject"><![CDATA[%dw 2.0
 output application/json
 ---
-if ( isEmpty(vars.entity) ) payload else vars.entity]]></ee:set-variable>
+payload]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="retrieve-project-insights-data-sub-flow" doc:id="48752e3f-ea3f-4f4b-ac01-374fba805066" name="retrieve-project-insights-data-sub-flow" />
