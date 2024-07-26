@@ -53,8 +53,9 @@ output application/x-www-form-urlencoded
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="sf-token" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sfState.oAuthToken}">
-				<http:body><![CDATA[#[vars.salesforceVars]]]></http:body>
+		<http:request method="POST" doc:name="sf-token" doc:id="81781337-0522-4055-be88-e59420da43c8" config-ref="salesforce-platform-api-http-request-configuration" path="${sfState.oAuthToken}" responseTimeout="${response.timeout}">
+				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}"/>
+			<http:body><![CDATA[#[vars.salesforceVars]]]></http:body>
 			</http:request>
 		<ee:transform doc:name="accessToken" doc:id="a85f77b2-33f7-4a46-b80a-b96aa8a917a3" >
 			<ee:message />

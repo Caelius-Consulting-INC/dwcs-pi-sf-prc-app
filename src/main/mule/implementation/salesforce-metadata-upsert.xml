@@ -55,11 +55,11 @@ else ["Resource_Type__mdt.$(vars.recordId)"]]]></ee:set-variable>
 					<ee:set-payload resource="dwl/p-sfMetadataMapping.dwl" />
 				</ee:message>
 			</ee:transform>
-			<logger level="DEBUG" doc:name="Debug Logger" doc:id="0eb967cf-37d4-49b0-87d3-9d017c0aaaa2" message="#[output json --- payload]" category="${debugPackages.sf}"/>
+			<logger level="DEBUG" doc:name="Debug:  Payload" doc:id="0eb967cf-37d4-49b0-87d3-9d017c0aaaa2" message="#[output json --- payload]" category="${debugPackages.sf}"/>
 			<salesforce:upsert-metadata type="CustomMetadata" doc:name="Upsert metadata" doc:id="12a42992-113b-4b51-b30e-3e0375d161aa" config-ref="salesforce-configuration" >
 				<reconnect count="${reconnection.attempts}" frequency="${reconnection.frequency}"/>
 			</salesforce:upsert-metadata>
-			<logger level="DEBUG" doc:name="Upsert Metadata Output" doc:id="9a35cb91-eb4c-4c66-9805-c008655b3afa" message="#[output json --- payload]" category="${debugPackages.sf}"/>
+			<logger level="DEBUG" doc:name="Debug : Upsert Metadata Output" doc:id="9a35cb91-eb4c-4c66-9805-c008655b3afa" message="#[output json --- payload]" category="${debugPackages.sf}"/>
 		</parallel-foreach>
 		<ee:transform doc:name="Final Payload" doc:id="05c4cc20-b1ec-412c-a3df-a17d8af12b6b" >
 			<ee:message >
