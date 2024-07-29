@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<sub-flow name="pi-iteration-sub-flow" doc:id="2336a48d-0184-433b-a223-e4186058914a" >
-		<logger level="INFO" doc:name="Start" doc:id="8ca24046-101b-4f2b-a163-ed73dc471679" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Started",&#10;	correlationId: vars.correlationId&#10;}]'/>
+		<logger level="INFO" doc:name="Start" doc:id="8ca24046-101b-4f2b-a163-ed73dc471679" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "Start of flow : " ++ flow.name,&#10;	message: "Projects Insights Iteration Sub Flow Started",&#10;	startDate: vars.startDate,&#10;	endDate: vars.endDate,&#10;	correlationId: vars.correlationId&#10;}]'/>
 		<ee:transform doc:name="Sync Objects" doc:id="5d19b215-4a21-4012-a7a7-35426487cd23" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
