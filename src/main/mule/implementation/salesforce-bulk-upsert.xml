@@ -59,6 +59,6 @@ output application/json
 {"state":"UploadComplete"}]]]></http:body>
 			<http:headers><![CDATA[#["Authorization" : "Bearer " ++ vars.accessToken]]]></http:headers>
 		</http:request>
-		<logger level="INFO" doc:name="END" doc:id="3128b6f5-fa78-4268-8838-52d3e3584f7d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Ended",&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
+		<logger level="INFO" doc:name="END" doc:id="3128b6f5-fa78-4268-8838-52d3e3584f7d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	flow: "End of flow : " ++ flow.name,&#10;	message: "Salesforce Bulk Upsert Ended",&#10;	sfBatchId: payload.id,&#10;	correlationId: vars.correlationId,&#10;	piSyncObject: vars.piSyncObject&#10;}]' />
 	</sub-flow>
 </mule>

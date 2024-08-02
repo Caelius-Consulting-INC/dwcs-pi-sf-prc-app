@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
-			<version>10.20.2</version>
+			<version>10.21.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
