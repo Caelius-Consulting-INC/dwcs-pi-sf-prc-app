@@ -66,5 +66,8 @@ sfVar:
   Task:
     externalId: "Id__c"
   
-response:
-  timeout: "600000"
+# Email Configuration
+email:
+  host: "smtp.gmail.com"
+  port: "587"
+  user: "anuj.bargav1@caeliusconsulting.com"

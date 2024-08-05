@@ -46,7 +46,7 @@ else if ( vars.piSyncObject == "ProjectType" ) ["Project_Type__mdt.$(vars.record
 else ["Resource_Type__mdt.$(vars.recordId)"]]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<salesforce:read-metadata type="CustomMetadata" doc:name="Read metadata" doc:id="d7ef9818-7a76-4d24-9de5-e614b08e94e1" config-ref="salesforce-configuration" >
+			<salesforce:read-metadata type="CustomMetadata" doc:name="Read Custom Metadata" doc:id="d7ef9818-7a76-4d24-9de5-e614b08e94e1" config-ref="salesforce-configuration" >
 				<reconnect frequency="${reconnection.frequency}" count="${reconnection.attempts}"/>
 				<salesforce:full-names ><![CDATA[#[vars.sfMetadataObject]]]></salesforce:full-names>
 			</salesforce:read-metadata>

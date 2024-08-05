@@ -1,52 +1,19 @@
 # Common Configuration
 
-# Listener Configuration
-http:
-  host: "0.0.0.0"
-  readTimeout: "30000"
-  port: "8081"
-  private:
-    port: "8091"
-    
+# Listener Configuration 
 https:
   host: "0.0.0.0"
   readTimeout: "30000"
-  port: "8085"
+  port: "8082"
   private:
     port: "8092"
-  
-# Retry Mechanism
-retry:
-  count: "5"
-  timeout: "60000"   
-  
+ 
 # Scheduler Max Concurrency
 maxConcurrency: "1"
 
 # Response Timeout
 response:
-  timeout: "600000"
-
-# Until Successful
-untilSuccessful:
-  retries: "10"
-  time: "15000"
-
-# Basic Auth Credentials
-basicAuth:
-  username: "50ad15a29d294f4ba3ed642e126f8b99"
-  password: "639F2E41d83B4378947Fa4967c14a64F"
-
-# Email Configuration
-email:
-  host: "smtp.gmail.com"
-  port: "587"
-  user: "anuj.bargav1@caeliusconsulting.com"
-  password: "zdwlaedjxewbovkx"
-
-# Parallel For Each Concurrency
-sfSync:
-  concurrency: "1"
+  timeout: "300000"
   
 # Reconnection
 reconnection:
@@ -56,7 +23,7 @@ reconnection:
 # Scheduler(s) Cron  
 cron:
   daily: "0 0 0 ? * MON,TUE,WED,THU,FRI *"
-  monthly: "0 0 0 ? 1-12 2#1 *"
+  monthly: "0 0 1 ? 1-12 * *"
   
 # Debug Logs Packages
 debugPackages:

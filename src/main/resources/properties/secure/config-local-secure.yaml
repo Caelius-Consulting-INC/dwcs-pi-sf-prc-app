@@ -11,3 +11,6 @@ salesforce:
   
 tls:
   password: "![aMEK+W3FUy/hCTzdarg7ig==]"
+  
+email:
+  password: "![mZ1ABGXsREOjy15d9pIwcrlV03x7DWgE]"

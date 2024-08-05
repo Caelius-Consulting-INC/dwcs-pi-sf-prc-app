@@ -49,8 +49,7 @@ salesforce:
   authorizationUrl: "https://deepwater.my.salesforce.com/services/Soap/u/56.0"
   
 sfVar:
-  //lineEnding: "LF"
-  lineEnding: "CRLF"
+  lineEnding: "LF"
   contentType: "CSV"
   operation: "upsert"
   columnDelimiter: "PIPE"
@@ -67,5 +66,8 @@ sfVar:
   Task:
     externalId: "Id__c"
   
-response:
-  timeout: "600000"
+# Email Configuration
+email:
+  host: "smtp.gmail.com"
+  port: "587"
+  user: "anuj.bargav1@caeliusconsulting.com"
