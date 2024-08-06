@@ -23,7 +23,7 @@ reconnection:
 # Scheduler(s) Cron  
 cron:
   daily: "0 0 0 ? * MON,TUE,WED,THU,FRI *"
-  monthly: "0 0 1 ? 1-12 * *"
+  monthly: "0 0 1 1 * ? *"
   
 # Debug Logs Packages
 debugPackages:
